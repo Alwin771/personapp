@@ -14,11 +14,22 @@ const Home = () => {
 const [products,setProducts]=useState([]);
 //using use effect to load data in beginning
 useEffect(()=>{
-axios.get('https://dummyjson.com/products').then((res)=>{
-  setProducts(res.data.products);})
+axios.get('http://localhost:9000/products').then((res)=>{
+  setProducts(Array.isArray(res.data) ? res.data : res.data.products || []);
+})
 .catch((error)=>{
   console.log("Error while fetching data");
 })},[])
+  // Function to handle delete
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:9000/products/${id}`);
+      setProducts(products.filter(product => product._id !== id));
+    } catch (error) {
+      console.log("Error while deleting product");
+    }
+  };
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -37,11 +48,14 @@ axios.get('https://dummyjson.com/products').then((res)=>{
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {product.id}
+                {product.productId}
               </TableCell>
-              <TableCell align="right">{product.title}</TableCell>
+              <TableCell align="right">{product.name}</TableCell>
               <TableCell align="right">{product.category}</TableCell>
               <TableCell align="right">{product.rating}</TableCell>
+               <TableCell align="right">
+                 <button onClick={() => handleDelete(product._id)}>delete</button>
+               </TableCell>
               
             </TableRow>
           ))}

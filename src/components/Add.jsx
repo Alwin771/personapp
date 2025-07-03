@@ -7,35 +7,52 @@ import { Rating } from '@mui/material';
 
 const Add = ({user}) => {
   const [form,setForm]=useState({
-    ProductID:'',
-    Name:'',
-    Category:'',
-    Rating:0
+    productId:'',
+    name:'',
+    category:'',
+    rating:''
   });
   let submitform=()=>{
-  console.log("Form submited",form);
-}
-let valueupdate=(e)=>{
-  //console.log(e)
-  setForm({...form,[e.target.name]:e.target.value})
-}
+    // Convert form state to JSON
+    const jsonPayload = JSON.stringify({
+      productId: form.productId,
+      name: form.name,
+      category: form.category,
+      rating: form.rating
+    });
+
+    fetch('http://localhost:9000/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: jsonPayload
+    })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error(error));
+
+    console.log("Form submitted", form);
+  }
+  let valueupdate=(e)=>{
+    //console.log(e)
+    setForm({...form,[e.target.name]:e.target.value})
+  }
   return (
     <Box
       component="form"
       sx={{ '& > :not(style)': { m: 1, width: '25ch' } }}
       noValidate
       autoComplete="off"
-    > <TextField id="outlined-basic" label="ProductID*" variant="outlined" name="ProductID" 
-    value={form.ProductID}
+    > <TextField id="outlined-basic" label="ProductID*" variant="outlined" name="productId" 
+    value={form.productId}
     onChange={valueupdate}/>
-      <TextField id="outlined-basic" label="Name*" variant="outlined" name="Name"
-      value={form.Name}
+      <TextField id="outlined-basic" label="Name*" variant="outlined" name="name"
+      value={form.name}
         onChange={valueupdate}/>
-      <TextField id="filled-basic" label="Category*" variant="outlined" name="Category"
-      value={form.Category}
+      <TextField id="filled-basic" label="Category*" variant="outlined" name="category"
+      value={form.category}
       onChange={valueupdate}/>
-      <TextField id="standard-basic" label="Rating*" variant="outlined" name="Rating"
-      value={form.Rating} 
+      <TextField id="standard-basic" label="Rating*" variant="outlined" name="rating"
+      value={form.rating} 
       onChange={valueupdate}/>
       <Button variant="contained" onClick={submitform} >Submit </Button>
       
